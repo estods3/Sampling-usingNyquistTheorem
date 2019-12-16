@@ -17,7 +17,7 @@ class Environment:
 		self.screen.fill((255,255,255))
 
 	# Redraw the environment with current generation printout, obstacles, samples, and path
-	def redrawEnv(self, inputSignalRate, frequencyScreenPos):
+	def redrawEnv(self, inputSignalRate, frequencyScreenPos, time):
                 ## Background and Signal Viewing Windows
 		self.screen.fill((255,255,255))
                 pygame.draw.rect(self.screen, blackColor, pygame.Rect(self.screenSizeX/2, 0, 5, self.screenSizeY))
@@ -41,16 +41,18 @@ class Environment:
                 self.screen.blit(textsurface,(0, 50))
 
                 plotPoints = []
-                for x in range(0, self.screenSizeX/2):
+                for x in range(0, self.screenSizeX):
                     y = int(math.sin(x/(self.screenSizeX/2.0) * 4 * math.pi) * inputSignalRate + self.screenSizeY/2 + 50)
-                    plotPoints.append([x, y])
+                    plotPoints.append([x-time, y])
                 pygame.draw.lines(self.screen, [0, 0, 255], False, plotPoints, 2)
+                pygame.draw.rect(self.screen, [255,255,255], pygame.Rect(self.screenSizeX/2.0 + 5,55,self.screenSizeX/2 - 5, self.screenSizeY-50))
+                pygame.draw.rect(self.screen, grayColor, pygame.Rect(0, self.screenSizeY/2+50, self.screenSizeX, 2))
                 pygame.display.flip()
 
                 ## Draw Sampled Signal
                 pygame.font.init()
                 font = pygame.font.SysFont('Comic Sans MS', 25)
-                textsurface = font.render('Output Signal: ', False, (0, 0, 0))
+                textsurface = font.render('Output Signal', False, (0, 0, 0))
                 self.screen.blit(textsurface,(self.screenSizeX/2 + 10, 50))
 
 		#for sample in population.samples:
