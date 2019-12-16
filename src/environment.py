@@ -1,9 +1,10 @@
 import pygame
 import sys
 import random
-
+import math
 redColor = pygame.Color(255,0,0)
 blackColor = pygame.Color(0,0,0)
+grayColor = pygame.Color(10,10,10)
 
 ##--------------------------------------------------------------------------------------------
 ## Environment: initializes 'pygame' environment for signal simulation
@@ -17,9 +18,10 @@ class Environment:
 
 	# Redraw the environment with current generation printout, obstacles, samples, and path
 	def redrawEnv(self, inputSignalRate, frequencyScreenPos):
-                ## Background
+                ## Background and Signal Viewing Windows
 		self.screen.fill((255,255,255))
                 pygame.draw.rect(self.screen, blackColor, pygame.Rect(self.screenSizeX/2, 0, 5, self.screenSizeY))
+                pygame.draw.rect(self.screen, grayColor, pygame.Rect(0, self.screenSizeY/2+50, self.screenSizeX, 2))
 
                 ## Draw Slider
                 if frequencyScreenPos < 0:
@@ -38,6 +40,12 @@ class Environment:
                 textsurface = font.render('Input Signal: ' + str(inputSignalRate) + " Hz", False, (0, 0, 0))
                 self.screen.blit(textsurface,(0, 50))
 
+                plotPoints = []
+                for x in range(0, self.screenSizeX/2):
+                    y = int(math.sin(x/(self.screenSizeX/2.0) * 4 * math.pi) * inputSignalRate + self.screenSizeY/2 + 50)
+                    plotPoints.append([x, y])
+                pygame.draw.lines(self.screen, [0, 0, 255], False, plotPoints, 2)
+                pygame.display.flip()
 
                 ## Draw Sampled Signal
                 pygame.font.init()

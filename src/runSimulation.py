@@ -7,7 +7,7 @@ from environment import Environment
 # Main Program #
 ################
 
-inputSig = random.randint(1, 1000)
+inputSig = random.randint(1, 100)
 env = Environment(1000, 300)
 env.redrawEnv(inputSig, 50)
 samplingFreqSelection = 0
