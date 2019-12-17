@@ -6,12 +6,18 @@ The simulation demonstrates the importance of the Nyquist–Shannon Sampling The
 ## System Requirements
 
 You will need Python to run this program. I tested it with Python 2.7.15+ 64 bit.
-You will also need a few Python modules. You can install these by typing `pip install -r requirements.txt` in your cloned directory of this repository.
+You will also need a few Python modules. You can install these by typing 
+
+`pip install -r requirements.txt`
+
+in your cloned directory of this repository.
 
 ## Example:
 
 Clone or download the code and navigate to its directory in a terminal.
-Run the program by typing the following in a terminal: `python src/runSimulation.py`
+Run the program by typing the following in a terminal: 
+
+`python src/runSimulation.py`
 
 A pygame window will appear with the simulator: an input signal window, an output signal window, and a slider at the top to select a sampling frequency.
 
