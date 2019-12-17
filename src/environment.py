@@ -26,7 +26,7 @@ class Environment:
                 pygame.draw.rect(self.screen, grayColor, pygame.Rect(0, self.screenSizeY/2+50, self.screenSizeX, 2))
 
                 ## Draw Slider
-                if frequencyScreenPos <= 1:
+                if frequencyScreenPos <= 3:
                     frequencyScreenPos = 1
                     samplingFrequency = 1
 		else:
@@ -61,7 +61,7 @@ class Environment:
                 pygame.draw.lines(self.screen, [0, 0, 255], False, inputPlotPoints, 2)
                 pygame.display.flip()
 
-                ## Draw Sampled Signal
+                ## Draw Sampled Signal and Approximate Input Signal
                 pygame.font.init()
                 font = pygame.font.SysFont('Comic Sans MS', 25)
                 textsurface = font.render('Output Signal', False, (0, 0, 0))
@@ -80,13 +80,16 @@ class Environment:
                         guess = numpy.array([guess_amp, 2.*numpy.pi*guess_freq, 0., guess_offset])
 
                         def sinfunc(t, A, w, p, c):  return A * numpy.sin(w*t + p) + c
-                        popt, pcov = scipy.optimize.curve_fit(sinfunc, tt, yy, p0=guess)
-                        A, w, p, c = popt
-                        f = w/(timeToSamplesConversion * 2.*numpy.pi)
-                        fitfunc = lambda t: A * numpy.sin(w*t + p) + c
-                        return {"amp": A, "omega": w, "phase": p, "offset": c, "freq": f, "period": 1./f, "fitfunc": fitfunc, "maxcov": numpy.max(pcov), "rawres": (guess,popt,pcov)}
-                    a,b = zip(*outputPlotPoints)
-                    res = fit_sin(a, b, timeToSamplesConversion)
+                        try:
+                            popt, pcov = scipy.optimize.curve_fit(sinfunc, tt, yy, p0=guess)
+                            A, w, p, c = popt
+                            f = w/(timeToSamplesConversion * 2.*numpy.pi)
+                            fitfunc = lambda t: A * numpy.sin(w*t + p) + c
+                            return {"amp": A, "omega": w, "phase": p, "offset": c, "freq": f, "period": 1./f, "maxcov": numpy.max(pcov), "rawres": (guess,popt,pcov)}
+                        except TypeError:
+                            return {"amp": 0, "omega": 0, "phase": 0, "offset": 0, "freq": 0, "period": 0, "maxcov": 0, "rawres": 0}
+                    t, y = zip(*outputPlotPoints)
+                    res = fit_sin(t, y, timeToSamplesConversion)
                     print( "Amplitude=%(amp)s, freq =%(freq)s, phase=%(phase)s, offset=%(offset)s, Max. Cov.=%(maxcov)s" % res )
                     pygame.draw.lines(self.screen, [0, 255, 0], False, outputPlotPoints, 2)
                     pygame.display.flip()
