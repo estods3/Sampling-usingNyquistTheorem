@@ -12,6 +12,7 @@ grayColor = pygame.Color(10,10,10)
 class Environment:
 	def __init__(self, screenWidth, screenHeight):
 		pygame.init()
+                pygame.display.set_caption('Nyquist Shannon Sampling Theorem Simulator')
 		self.screenSizeX, self.screenSizeY = screenWidth, screenHeight
 		self.screen = pygame.display.set_mode((self.screenSizeX, self.screenSizeY))
 		self.screen.fill((255,255,255))
@@ -24,7 +25,7 @@ class Environment:
                 pygame.draw.rect(self.screen, grayColor, pygame.Rect(0, self.screenSizeY/2+50, self.screenSizeX, 2))
 
                 ## Draw Slider
-                if frequencyScreenPos < 1:
+                if frequencyScreenPos <= 1:
                     frequencyScreenPos = 1
                     samplingFrequency = 1
 		else:
@@ -44,16 +45,17 @@ class Environment:
                 textsurface = font.render('Input Signal: ' + str(inputSignalRate) + " Hz", False, (0, 0, 0))
                 self.screen.blit(textsurface,(0, 50))
 
-                samplingInterval = int(1.0/samplingFrequency * self.screenSizeX/2.0)
+                timeToSamplesConversion = 1.0/(self.screenSizeX/2.0) # This converts the time shown in the viewing window (1.0 second) into discrete data points for displaying
+                samplingInterval = int((1.0/timeToSamplesConversion) / samplingFrequency)
                 inputPlotPoints = []
                 outputPlotPoints = []
                 for x in range(0, self.screenSizeX):
                     centerPlotLineOffset = self.screenSizeY/2 + 50
                     amplitude = 70
-                    y = int(amplitude * math.sin((1.0/inputSignalRate) * (self.screenSizeX/2.0) * x) + centerPlotLineOffset)
+                    y = int(amplitude * math.sin((inputSignalRate) * (2*math.pi) * timeToSamplesConversion * x) + centerPlotLineOffset)
                     if(x-time < self.screenSizeX/2.0):
                         inputPlotPoints.append([int(x-time), y])
-                    if(x-time > 0 and samplingInterval > 0 and (x-time) % samplingInterval == 0):
+                    if(x-time > 0 and samplingInterval > 0 and x % samplingInterval == 0):
                         outputPlotPoints.append([int(x-time + (self.screenSizeX/2.0 + 5)), y])
                 pygame.draw.lines(self.screen, [0, 0, 255], False, inputPlotPoints, 2)
                 pygame.display.flip()
@@ -63,7 +65,7 @@ class Environment:
                 font = pygame.font.SysFont('Comic Sans MS', 25)
                 textsurface = font.render('Output Signal', False, (0, 0, 0))
                 self.screen.blit(textsurface,(self.screenSizeX/2 + 10, 50))
-                if(outputPlotPoints):
+                if(len(outputPlotPoints) > 1):
                     pygame.draw.lines(self.screen, [0, 255, 0], False, outputPlotPoints, 2)
                     pygame.display.flip()
 
