@@ -24,14 +24,18 @@ class Environment:
                 pygame.draw.rect(self.screen, grayColor, pygame.Rect(0, self.screenSizeY/2+50, self.screenSizeX, 2))
 
                 ## Draw Slider
-                if frequencyScreenPos < 0:
-                    frequencyScreenPos = 0
+                if frequencyScreenPos < 1:
+                    frequencyScreenPos = 1
+                    samplingFrequency = 1
+		else:
+                    #scale the position so the sampling frequency maxes at the signal window size
+                    samplingFrequency = frequencyScreenPos/2
 
                 pygame.draw.rect(self.screen, blackColor, pygame.Rect(0, 0, self.screenSizeX, 50))
                 pygame.draw.rect(self.screen, redColor, pygame.Rect(frequencyScreenPos, 0, 20, 50))
 		pygame.font.init()
                 font = pygame.font.SysFont('Comic Sans MS', 25)
-		textsurface = font.render('Sampling Rate: ' + str(frequencyScreenPos) + " Hz", False, (255, 255, 255))
+		textsurface = font.render('Sampling Rate: ' + str(samplingFrequency) + " Hz", False, (255, 255, 255))
 		self.screen.blit(textsurface,(0,0))
 
                 ## Draw Input Signal
@@ -40,13 +44,18 @@ class Environment:
                 textsurface = font.render('Input Signal: ' + str(inputSignalRate) + " Hz", False, (0, 0, 0))
                 self.screen.blit(textsurface,(0, 50))
 
-                plotPoints = []
+                samplingInterval = int(1.0/samplingFrequency * self.screenSizeX/2.0)
+                inputPlotPoints = []
+                outputPlotPoints = []
                 for x in range(0, self.screenSizeX):
-                    y = int(math.sin(x/(self.screenSizeX/2.0) * 4 * math.pi) * inputSignalRate + self.screenSizeY/2 + 50)
-                    plotPoints.append([x-time, y])
-                pygame.draw.lines(self.screen, [0, 0, 255], False, plotPoints, 2)
-                pygame.draw.rect(self.screen, [255,255,255], pygame.Rect(self.screenSizeX/2.0 + 5,55,self.screenSizeX/2 - 5, self.screenSizeY-50))
-                pygame.draw.rect(self.screen, grayColor, pygame.Rect(0, self.screenSizeY/2+50, self.screenSizeX, 2))
+                    centerPlotLineOffset = self.screenSizeY/2 + 50
+                    amplitude = 70
+                    y = int(amplitude * math.sin((1.0/inputSignalRate) * (self.screenSizeX/2.0) * x) + centerPlotLineOffset)
+                    if(x-time < self.screenSizeX/2.0):
+                        inputPlotPoints.append([int(x-time), y])
+                    if(x-time > 0 and samplingInterval > 0 and (x-time) % samplingInterval == 0):
+                        outputPlotPoints.append([int(x-time + (self.screenSizeX/2.0 + 5)), y])
+                pygame.draw.lines(self.screen, [0, 0, 255], False, inputPlotPoints, 2)
                 pygame.display.flip()
 
                 ## Draw Sampled Signal
@@ -54,12 +63,11 @@ class Environment:
                 font = pygame.font.SysFont('Comic Sans MS', 25)
                 textsurface = font.render('Output Signal', False, (0, 0, 0))
                 self.screen.blit(textsurface,(self.screenSizeX/2 + 10, 50))
+                if(outputPlotPoints):
+                    pygame.draw.lines(self.screen, [0, 255, 0], False, outputPlotPoints, 2)
+                    pygame.display.flip()
 
-		#for sample in population.samples:
-			#pygame.draw.rect(self.screen, sample.color, (sample.kinematics.p.x, sample.kinematics.p.y, 5, 5), 0)
-			#if(sample.isFittest):
-				#self.linePoints.append((sample.kinematics.p.x, sample.kinematics.p.y))
-				#pygame.draw.lines(self.screen, (0, 0, 200), False, self.linePoints, 3)	
+                ## Update Display
 		pygame.display.update()
 
 	# Check to see if the program was exited
