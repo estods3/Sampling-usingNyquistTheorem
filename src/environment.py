@@ -85,8 +85,8 @@ class Environment:
                             A, w, p, c = popt
                             f = w/(timeToSamplesConversion * 2.*numpy.pi)
                             fitfunc = lambda t: A * numpy.sin(w*t + p) + c
-                            return {"amp": A, "omega": w, "phase": p, "offset": c, "freq": f, "period": 1./f, "maxcov": numpy.max(pcov), "rawres": (guess,popt,pcov)}
-                        except TypeError:
+                            return {"amp": abs(A), "omega": w, "phase": p, "offset": c, "freq": f, "period": 1./f, "maxcov": numpy.max(pcov), "rawres": (guess,popt,pcov)}
+                        except:
                             return {"amp": 0, "omega": 0, "phase": 0, "offset": 0, "freq": 0, "period": 0, "maxcov": 0, "rawres": 0}
                     t, y = zip(*outputPlotPoints)
                     res = fit_sin(t, y, timeToSamplesConversion)
