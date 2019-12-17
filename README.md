@@ -24,7 +24,7 @@ A pygame window will appear with the simulator: an input signal window, an outpu
 Drag the slider to select a frequency to sample the input signal. The corresponding output will show on the right. If the sampling frequency is less than the minimum Nyquist frequency (2 X Max. Input Frequency) the output signal will look very different from the input due to aliasing. The estimated frequency (displayed in the terminal) will also be inaccurate.
 ![Alt text](/screenshots/FrequencyLowerThanDoubleInput.png?raw=true "Sampling Frequency Less than Nyquist")
 
-If the sampling frequency is greater than the Nyquist frequency, the output signal will more closely mirror the input and the estimated frequency (displayed in the terminal) will also be accurate. 
+If the sampling frequency is greater than the Nyquist frequency, the output signal will more closely mirror the input and the estimated frequency (displayed in the terminal) will also be accurate. This means the signal can be reconstructed and its frequency approximated without aliasing.
 ![Alt text](/screenshots/FrequencyGreaterThanNyquist.png?raw=true "Sampling Frequency Greater than Nyquist")
 
 Note, because the ouput signal is drawn using lines rather than a sinusoid, the output signal will not match the input unless the sampling frequency is an order of magnitude higher than the input frequency as shown below. 
