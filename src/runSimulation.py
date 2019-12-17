@@ -8,7 +8,7 @@ from environment import Environment
 ################
 
 inputSig = random.randint(3, 30)
-samplingFreqSelection = inputSig * 2
+samplingFreqSelection = inputSig * 4
 t = 0
 
 env = Environment(1000, 300)
