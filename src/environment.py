@@ -2,6 +2,7 @@ import pygame
 import sys
 import random
 import math
+import numpy, scipy.optimize
 redColor = pygame.Color(255,0,0)
 blackColor = pygame.Color(0,0,0)
 grayColor = pygame.Color(10,10,10)
@@ -66,6 +67,27 @@ class Environment:
                 textsurface = font.render('Output Signal', False, (0, 0, 0))
                 self.screen.blit(textsurface,(self.screenSizeX/2 + 10, 50))
                 if(len(outputPlotPoints) > 1):
+                    #Thanks to "unsym" for the function: https://stackoverflow.com/questions/16716302/how-do-i-fit-a-sine-curve-to-my-data-with-pylab-and-numpy
+                    def fit_sin(tt, yy, timeToSamplesConversion):
+                        '''Fit sin to the input time sequence, and return fitting parameters "amp", "omega", "phase", "offset", "freq", "period" and "fitfunc"'''
+                        tt = numpy.array(tt)
+                        yy = numpy.array(yy)
+                        ff = numpy.fft.fftfreq(len(tt), (tt[1]-tt[0]))   # assume uniform spacing
+                        Fyy = abs(numpy.fft.fft(yy))
+                        guess_freq = abs(ff[numpy.argmax(Fyy[1:])+1])   # excluding the zero frequency "peak", which is related to offset
+                        guess_amp = numpy.std(yy) * 2.**0.5
+                        guess_offset = numpy.mean(yy)
+                        guess = numpy.array([guess_amp, 2.*numpy.pi*guess_freq, 0., guess_offset])
+
+                        def sinfunc(t, A, w, p, c):  return A * numpy.sin(w*t + p) + c
+                        popt, pcov = scipy.optimize.curve_fit(sinfunc, tt, yy, p0=guess)
+                        A, w, p, c = popt
+                        f = w/(timeToSamplesConversion * 2.*numpy.pi)
+                        fitfunc = lambda t: A * numpy.sin(w*t + p) + c
+                        return {"amp": A, "omega": w, "phase": p, "offset": c, "freq": f, "period": 1./f, "fitfunc": fitfunc, "maxcov": numpy.max(pcov), "rawres": (guess,popt,pcov)}
+                    a,b = zip(*outputPlotPoints)
+                    res = fit_sin(a, b, timeToSamplesConversion)
+                    print( "Amplitude=%(amp)s, freq =%(freq)s, phase=%(phase)s, offset=%(offset)s, Max. Cov.=%(maxcov)s" % res )
                     pygame.draw.lines(self.screen, [0, 255, 0], False, outputPlotPoints, 2)
                     pygame.display.flip()
 
