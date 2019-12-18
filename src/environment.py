@@ -59,7 +59,7 @@ class Environment:
                     if(x-time > 0 and samplingInterval > 0 and x % samplingInterval == 0):
                         outputPlotPoints.append([int(x-time + (self.screenSizeX/2.0 + 5)), y])
                 pygame.draw.lines(self.screen, [0, 0, 255], False, inputPlotPoints, 2)
-                pygame.display.flip()
+                #pygame.display.flip()
 
                 ## Draw Sampled Signal and Approximate Input Signal
                 pygame.font.init()
@@ -92,7 +92,7 @@ class Environment:
                     res = fit_sin(t, y, timeToSamplesConversion)
                     print( "Amplitude=%(amp)s, freq =%(freq)s, phase=%(phase)s, offset=%(offset)s, Max. Cov.=%(maxcov)s" % res )
                     pygame.draw.lines(self.screen, [0, 255, 0], False, outputPlotPoints, 2)
-                    pygame.display.flip()
+                    #pygame.display.flip()
 
                 ## Update Display
 		pygame.display.update()
