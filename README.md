@@ -1,5 +1,8 @@
-# Sampling-usingNyquistTheorem
+# Sampling using Nyquist Theorem
 This simulation is a useful demonstration of how an input signal can be sampled to collect and store data in a digital system. The simulator generates a an input signal of a randomized frequency and allows the user to select a sampling frequency to read the input signal and then recreate it in the output based on the samples.
+
+![Alt text](https://github.com/estods3/Sampling-usingNyquistTheorem/blob/master/screenshots/sampling.gif?raw=true "Sampling")
+
 
 The simulation demonstrates the importance of the Nyquist–Shannon Sampling Theorem in determining what sampling frequency should be selected for a data collection system.
 
